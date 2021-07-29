@@ -1,0 +1,113 @@
+ALTER table staffinfo
+	ADD COLUMN document tsvector;
+	UPDATE staffinfo
+	SET document = to_tsvector(firstname || ' ' || lastname || ' ' || position)
+
+insert into staffinfo (firstname, lastname, position, age, salary, dateofbirth, yearsofservice, officialcar) values ('Morna', 'Whitehouse', 'backend', 38, 38900, '2020-02-16', 13, true);
+
+inst := `INSERT into staffinfo (firstname, lastname, position, age, salary, dateofbirth, yearsofservice, officialcar) VALUES (?, ?, ?, ?, ?, ?, ?, ?) ON CONFLICT DO NOTHING;`
+		_, err := db.Exec(inst, s.Firstname, s.Lastname, s.Position, age, salary, dateofbirth, s.Yearsofservice, officialcar)
+		if err != nil{
+			//fmt.Println("err: ", err)
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+
+		_, err := db.Exec(inst, firstname, lastname, position, age, salary, dateofbirth, yearsofservice, officialcar)
+r.ParseForm()
+		age := r.FormValue("age")
+		dateofbirth := r.FormValue("dateofbirth")
+		firstname := r.FormValue("firstname")
+		lastname := r.FormValue("lastname")
+		officialcar := r.FormValue("officialcar")
+		yearsofservice := r.FormValue("yearsofservice")
+		position := r.FormValue("position")
+		salary := r.FormValue("salary")
+
+		inst := `INSERT into staffinfo (firstname, lastname, position, age, salary, dateofbirth, yearsofservice, officialcar) VALUES ($1, $2, $3, $4, $5, $6, $7, $8) ON CONFLICT DO NOTHING`
+		_, err := db.Exec(inst, firstname, lastname, position, age, salary, dateofbirth, yearsofservice, officialcar)
+		if err != nil{
+			fmt.Println("err: ", err)
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+
+
+CREATE TABLE testbool (
+  sometext TEXT,
+  is_checked BOOLEAN
+);
+
+numeric (5, 2)
+400.7889 to 400.78
+
+inteer 
+23
+34
+to avoid "numeric field overflow"
+	see tis below
+if you want to use numeric(8, 2) in sql, change html to type "number", step "any". Very Important!
+
+_, err := db.Exec(inst, firstname, lastname, position, age, salary, yearsofservice, dateofbirth, officialcar)
+		if err != nil{
+			fmt.Println("err: ", err)
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+
+template: datavault.html:23:26: executing "datavault.html" at <.ID>: can't evaluate field ID in type main.Staffinfo
+
+{{if .}}
+<div class="container mt-5 mb-5 text-center">
+  <div class="row">
+    <div class="col-12">
+      <h3 class="btn btn-primary">
+        {{.}}
+      </h3>
+    </div>
+
+  </div>
+
+</div>
+{{end}}
+
+func search(w http.ResponseWriter, r *http.Request) {
+	r.ParseForm()
+	firstname := r.FormValue("firstname")
+	smt := `SELECT * FROM staffinfo WHERE firstname = $1;`
+	row := db.QueryRow(smt, firstname)
+	p := Staffinfo{}
+	err := row.Scan(&p.Id, &p.Firstname, &p.Lastname, &p.Position, &p.Age, &p.Salary, &p.Dateofbirth, &p.Yearsofservice, &p.Officialcar)
+	if err != nil {
+		fmt.Println("err: ", err.Error())
+		panic(err.Error())
+	}
+	templates.ExecuteTemplate(w, "search.html", p)
+}
+
+func search(w http.ResponseWriter, r *http.Request) {
+	r.ParseForm()
+	firstname := r.FormValue("firstname")
+	smt := `SELECT * FROM staffinfo WHERE firstname = $1;`
+	row := db.QueryRow(smt, firstname)
+	p := Staffinfo{}
+	err := row.Scan(&p.Id, &p.Firstname, &p.Lastname, &p.Position, &p.Age, &p.Salary, &p.Dateofbirth, &p.Yearsofservice, &p.Officialcar)
+	switch err {
+	case nil :
+		fmt.Println("sort it out")
+	case sql.ErrNoRows :
+		fmt.Println("nooooo")
+	default:
+		fmt.Println("researc more")
+	}
+	templates.ExecuteTemplate(w, "search.html", p)
+}
+
+case sql.ErrNoRows:
+		//templates.ExecuteTemplate(w, "register.html", "Username and Password not taken. Proceed!")
+		http.Redirect(w, r, "/login", 307)
+		fmt.Fprintln(w, "Username and Password not taken. Proceed!")
+		//fmt.Fprintln(w, "No such Username or Password in database!")
+		return
+	default:
+		fmt.Println("Register!!!")
