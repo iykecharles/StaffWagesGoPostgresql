@@ -613,3 +613,5 @@ func search(w http.ResponseWriter, r *http.Request) {
 	}
 
 }
+
+// password1 and password2 must be same
