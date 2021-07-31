@@ -1,3 +1,4 @@
+Note 6
 ALTER table staffinfo
 	ADD COLUMN document tsvector;
 	UPDATE staffinfo
